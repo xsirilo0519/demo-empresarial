@@ -1,10 +1,12 @@
 package co.com.sofka.questions.usecases;
 
-import co.com.sofka.questions.collections.Answer;
-import co.com.sofka.questions.model.AnswerDTO;
+import co.com.sofka.questions.collections.Question;
+import co.com.sofka.questions.model.QuestionDTO;
 import co.com.sofka.questions.repositories.AnswerRepository;
 import co.com.sofka.questions.repositories.QuestionRepository;
 import co.com.sofka.questions.useCases.DeleteUseCase;
+import co.com.sofka.questions.utils.Category;
+import co.com.sofka.questions.utils.Type;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -27,14 +29,25 @@ class DeleteUseCaseTest {
     @Test
     void deleteUseCase(){
 
-        var answerDTO = new AnswerDTO("1", "xxxx", "Su nombre es Steve Rogers");
+        var questionDT0 = new QuestionDTO("1",
+                "xxxx",
+                "What is java?",
+                Type.OPEN, Category.SCIENCES);
 
-        var answer = new Answer("11", "xxxx", "1", "Su nombre es Steve Rogers", 1);
+        var question = new Question("1",
+                "xxxx",
+                "What is java?",
+                Type.OPEN,
+                Category.SCIENCES);
+
 
         Mockito.when(questionRepository.deleteById("xxxx")).thenReturn(Mono.empty());
         Mockito.when(answerRepository.deleteByQuestionId("xxxx")).thenReturn(Mono.empty());
 
         var result = deleteQuestionUseCase.apply("xxxx").block();
         Assertions.assertNull(result);
+
+        Mockito.verify(answerRepository,Mockito.times(1)).deleteByQuestionId("xxxx");
     }
+
 }

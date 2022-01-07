@@ -14,8 +14,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import reactor.core.publisher.Mono;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @SpringBootTest
 class GetUseCaseTest {
 
@@ -25,9 +23,14 @@ class GetUseCaseTest {
     private GetUseCase getQuestion;
 
     @Test
-    public void get(){
+    public void getQuestion(){
 
-        var questionDTO = new QuestionDTO("1","1","¿What is java?", Type.OPEN,Category.TECHNOLOGY_AND_COMPUTER);
+        var questionDTO = new QuestionDTO("1"
+                ,"1",
+                "¿What is java?",
+                Type.OPEN,
+                Category.TECHNOLOGY_AND_COMPUTER);
+
         var question= new Question();
         question.setId("1");
         question.setQuestion("¿What is java?");
@@ -39,6 +42,13 @@ class GetUseCaseTest {
 
         var respuesta = getQuestion.apply("1");
         Assertions.assertEquals(respuesta.block().getQuestion(), question.getQuestion());
+        Assertions.assertEquals(respuesta.block().getId(), question.getId());
+        Assertions.assertEquals(respuesta.block().getUserId(), question.getUserId());
+        Assertions.assertEquals(respuesta.block().getType(), question.getType());
+        Assertions.assertEquals(respuesta.block().getCategory(), question.getCategory());
+
+        Mockito.verify(questionRepository,Mockito.times(1)).findById("1");
     }
+
 
 }

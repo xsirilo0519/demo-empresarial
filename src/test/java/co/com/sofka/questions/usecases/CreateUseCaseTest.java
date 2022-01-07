@@ -16,6 +16,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.Objects;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -30,15 +31,26 @@ class CreateUseCaseTest {
     @Test
     void createQuestion() {
 
-        var questionDT0 = new QuestionDTO("1", "xxxx", "Nombre del capitán América",
+        var questionDT0 = new QuestionDTO("1",
+                "xxxx",
+                "What is java?",
                 Type.OPEN, Category.SCIENCES);
 
-        var question = new Question("1", "xxxx", "Nombre del capitán América",Type.OPEN, Category.SCIENCES);
+        var question = new Question("1",
+                "xxxx",
+                "What is java?",
+                Type.OPEN,
+                Category.SCIENCES);
 
-        when(repository.save(Mockito.any(Question.class))).thenReturn(Mono.just(question));
+        when(repository.save(Mockito.any())).thenReturn(Mono.just(question));
 
         var result = createUseCase.apply(questionDT0);
 
         Assertions.assertEquals(Objects.requireNonNull(result.block()),"1");
+        Assertions.assertEquals(result.block(),question.getId());
+
+        Mockito.verify(repository,Mockito.times(1)).save(any());
+
     }
+
 }

@@ -17,6 +17,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import reactor.core.publisher.Mono;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
 @SpringBootTest
 class AddAnswerUseCaseTest {
     @SpyBean
@@ -29,15 +32,24 @@ class AddAnswerUseCaseTest {
     AnswerRepository answerRepository;
 
     @Test
-    void answerTest(){
-        var question = new QuestionDTO("11", "xxxx", "Nombre del capitán América", Type.OPEN, Category.SCIENCES);
+    void addAnswerTest() {
+        var question = new QuestionDTO("11",
+                "xxxx",
+                "What is java?",
+                Type.OPEN,
+                Category.SCIENCES);
 
-        var answerDTO = new AnswerDTO("1", "xxxx", "Su nombre es Steve Rogers");
+        var answerDTO = new AnswerDTO("1",
+                "xxxx",
+                "Es un lenguaje de programación y otras palabras");
 
-        var answer = new Answer("11", "xxxx", "1", "Su nombre es Steve Rogers", 1);
+        var answer = new Answer("11",
+                "xxxx",
+                "1",
+                "Es un lenguaje de programación y otras palabras", 1);
 
-        Mockito.when(answerRepository.save(Mockito.any(Answer.class))).thenReturn(Mono.just(answer));
-        Mockito.when(getUseCase.apply(Mockito.anyString())).thenReturn(Mono.just(question));
+        when(answerRepository.save(any())).thenReturn(Mono.just(answer));
+        when(getUseCase.apply(any())).thenReturn(Mono.just(question));
 
         var questionDTO = addAnswerUseCase.apply(answerDTO);
         var resultQuestionDTO = questionDTO.block();
@@ -46,9 +58,8 @@ class AddAnswerUseCaseTest {
         Assertions.assertEquals(resultQuestionDTO.getId(),question.getId());
         Assertions.assertEquals(resultQuestionDTO.getQuestion(),question.getQuestion());
         Assertions.assertEquals(resultQuestionDTO.getAnswers().get(0).getQuestionId(),answerDTO.getQuestionId());
+        Assertions.assertEquals(resultQuestionDTO.getAnswers().get(0).getAnswer(),answerDTO.getAnswer());
 
-
-
-
+        Mockito.verify(answerRepository,Mockito.times(1)).save(any());
     }
 }

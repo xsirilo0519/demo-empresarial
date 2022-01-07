@@ -16,6 +16,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.Objects;
 
+import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -28,17 +29,29 @@ class UpdateUseCaseTest {
     private QuestionRepository repository;
 
     @Test
-    void updateTest() {
+    void updateQuestionTest() {
 
-        var questionDT0 = new QuestionDTO("1", "xxxx", "Nombre del capitán América",
-                Type.OPEN, Category.SCIENCES);
+        var questionDTO = new QuestionDTO("11",
+                "xxxx",
+                "What is java?",
+                Type.OPEN,
+                Category.SCIENCES);
 
-        var question = new Question("1", "xxxx", "Nombre del capitán América", Type.OPEN, Category.SCIENCES);
+        var question = new Question("11",
+                "xxxx",
+                "What is java?",
+                Type.OPEN,
+                Category.SCIENCES);
 
-        when(repository.save(Mockito.any(Question.class))).thenReturn(Mono.just(question));
 
-        var result = updateUseCase.apply(questionDT0);
+        when(repository.save(Mockito.any())).thenReturn(Mono.just(question));
 
-        Assertions.assertEquals(Objects.requireNonNull(result.block()), "1");
+        var result = updateUseCase.apply(questionDTO);
+
+        Assertions.assertEquals(Objects.requireNonNull(result.block()), "11");
+
+        Mockito.verify(repository,Mockito.times(1)).save(any());
+
     }
+
 }
